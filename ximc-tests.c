@@ -2,14 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#if defined(__APPLE__) && !defined(NOFRAMEWORK)
-#include <libximc/ximc.h>
-#else
 #include <ximc.h>
-#endif
-
-// This line includes a c-profile for the "8MT173-25" stage
-#include "8MT173-25.h"
 
 int main (int argc, char* argv[])
 {
@@ -49,9 +42,11 @@ int main (int argc, char* argv[])
 		free_enumerate_devices( devenum );
 		return 1;
 	}
+    
+    int device_index=0; // You can change device here
 
-//	Copy first found device name into a string
-	strcpy( device_name, get_device_name( devenum, 0 ) );
+//	Copy found device name into a string
+	strcpy( device_name, get_device_name( devenum, device_index ) );
 //	Free memory used by device enumeration data
 	free_enumerate_devices( devenum );
 
@@ -60,10 +55,16 @@ int main (int argc, char* argv[])
 	device = open_device( device_name );
 	printf( "done.\n" );
 
-//	Load c-profile
-	printf( "Setting profile for 8MT173-25... ");
-	result = set_profile_8MT173_25(device);
-	printf( "done. Result = %d\n", result );
+//  Get device info 
+    device_information_t device_information;
+    memset((void*)&device_information, 0, sizeof(device_information));
+    get_device_information(device, &device_information); 
+    printf("Производитель: %s\n", device_information.Manufacturer);
+    printf("Идентификатор производителя: %s\n", device_information.ManufacturerId);
+    printf("Описание продукта: %s\n", device_information.ProductDescription);
+    printf("Основной номер версии железа: %d\n", device_information.Major);
+    printf("Второстепенный номер версии железа: %d\n", device_information.Minor);
+    printf("Номер правок этой версии железа: %d\n", device_information.Release);
 
 	printf( "Closing device..." );
 //	Close specified device
