@@ -43,6 +43,12 @@ int main (int argc, char* argv[])
 		return 1;
 	}
     
+    printf("Найдено %d устройств.\n", names_count);
+    for (int i=0; i<names_count; i++) 
+    {
+        strcpy( device_name, get_device_name( devenum, i ) );
+        printf("device index: %d, device name: %s\n", i, device_name);	
+    }
     int device_index=0; // You can change device here
 
 //	Copy found device name into a string
@@ -50,7 +56,7 @@ int main (int argc, char* argv[])
 //	Free memory used by device enumeration data
 	free_enumerate_devices( devenum );
 
-	printf( "Opening device...");
+	printf( "Opening device: %s\n", device_name);
 //	Open device by device name
 	device = open_device( device_name );
 	printf( "done.\n" );
